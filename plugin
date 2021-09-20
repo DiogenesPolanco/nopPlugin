@@ -121,7 +121,7 @@ HelpExample() {
 }
 NoSDKInstalled() {
     local sdk=$1
-    Error "No dotnet Sdk ($sdk) install. for information plese type followin command: dotnet --list-sdks"
+    Error "You do not fave the dotnet SDK ($sdk) installed. For more information plaese type followin command: dotnet --list-sdks"
 }
 if [ "$1" = "-h" -o "$1" = "--help" ]; then Help; fi
 if [ ! -d ./Plugins ] && [ ! -f ./*.sln ]; then DirHelp; fi
