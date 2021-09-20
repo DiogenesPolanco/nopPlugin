@@ -1,0 +1,422 @@
+#! /bin/bash
+
+# Create the solution
+# /${appName}
+#    /Plugins/
+#    	Nop.Plugin.${group}.${name}/
+#		    ${group}.${name}.csproj
+#		    Controllers/xxx
+#		    Models/xxx
+#		    Views/xxx
+## default : dotnet 3.1 | nopCommerce 4.30 | nopCommerce 4.40
+## Framework values : netcoreapp3.1 | net5.0
+
+#Methos
+Success() {
+    local message=$1
+    tput setaf 2
+    echo -e "$message\n"
+    tput setaf 7
+}
+Warning() {
+    local message=$1
+    tput setaf 3
+    echo -e "$message\n"
+    tput setaf 7
+}
+WarningCreating() {
+    local message=$1 seconds=$2
+    tput setaf 3
+    echo -e "\e[1;32m$message...\e[0m"
+    sleep $seconds
+    tput setaf 7
+}
+Error() {
+    local message=$1
+    tput setaf 1
+    echo -e "$message\n"
+    tput setaf 7
+    exit 0
+}
+SuccessTag() {
+    local message=$1
+    tput setaf 2
+    echo -e "Success: $message\n"
+    tput setaf 7
+}
+WarningTag() {
+    local message=$1
+    tput setaf 3
+    echo -e "Warning: $message\n"
+    tput setaf 7
+}
+ErrorTag() {
+    local message=$1
+    tput setaf 1
+    echo -e "Error: $message\n"
+    tput setaf 7
+}
+Message() {
+    local message=$1
+    tput setaf 6
+    echo -e "$message"
+    tput setaf 7
+}
+Help() {
+    echo "nopCommerce Plugin, versions supported are: 4.x"
+    echo -e "Usage: plugin [plugin-group] [plugin-name] [nop-version]\n"
+
+    echo -e "Plugin options:"
+    echo -e "   -d|--diagnostics  Enable diagnostic output."
+    echo -e "   -h|--help         Show command line help."
+    echo -e "   --info            Display plugin information.\n"
+
+    echo -e "Plugin commands:"
+    echo -e "   add               Add a package or reference to a .NET project.\n"
+    echo -e "Run 'plugin [command] --help' for more information on a command."
+    exit 0
+}
+CommandHelp() {
+    echo "nopCommerce Plugin, versions supported are: 4.x"
+    echo -e "Usage: plugin [plugin-group] [plugin-name] [nop-version]\n"
+
+    echo -e "Plugin options:"
+    echo -e "   -d|--diagnostics  Enable diagnostic output."
+    echo -e "   -h|--help         Show command line help."
+    echo -e "   --info            Display plugin information.\n"
+
+    echo -e "Plugin commands:"
+    echo -e "   new               Add new plugin in the nopCommerce project.\n"
+    echo -e "Run 'plugin [command] --help' for more information on a command."
+    exit 0
+}
+DirHelp() {
+    tput setaf 1
+    echo -e "please, put the file in the nopCommerce root example:"
+    tput setaf 7
+    echo -e "nopCommerce/"
+    echo -e "        /plugin                <--  this es the file to run (plugin.sh)"
+    echo -e "        /nopCommnerce.sln      <--  this is the source file (file.sln)"
+    echo -e "        /Plugin/..."
+    echo -e "        /Presentation/..."
+    echo -e "        /Libraries/...\n"
+
+    echo -e "Usage: plugin [plugin-group] [plugin-name] [nop-version]"
+    echo -e "example: plugin Payment Manual 4.30\n"
+
+    echo -e "Plugin options:"
+    echo -e "   -d|--diagnostics  Enable diagnostic output."
+    echo -e "   -h|--help         Show command line help."
+    echo -e "   --info            Display plugin information.\n"
+
+    echo -e "Plugin commands:"
+    echo -e "   new               Add new plugin in the nopCommerce project.\n"
+    echo -e "Run 'plugin [command] --help' for more information on a command."
+    exit 0
+}
+HelpExample() {
+    echo -e "Example you can run command like: plugin [plugin-group] [plugin-name] 4.30."
+    echo -e "or:                             ./plugin [plugin-group] [plugin-name] 4.30."
+    exit 0
+}
+NoSDKInstalled() {
+    local sdk=$1
+    Error "No dotnet Sdk ($sdk) install. for information plese type followin command: dotnet --list-sdks"
+}
+if [ ! -d ./Plugins ] && [ ! -f ./*.sln ]; then DirHelp; fi
+if [ "$1" = "-h" -o "$1" = "--help" ]; then Help; fi
+if [ "$1" = "new" ] && [ "$2" = "-h" -o "$2" = "--help" ]; then CommandHelp; fi
+if [ "$1" = "" -o "$2" = "" -o "$3" = "" ]; then
+    HelpExample
+else
+    if [ "$3" = "4.00" ]; then
+        framework=netcoreapp3.0
+        if [ ! $(dotnet --list-sdks | grep 3.0) ]; then NoSDKInstalled $framework; fi
+        Success "Creating the Plugin with the dotnet SDK Version: $framework" 5
+    elif [ "$3" = "4.10" ]; then
+        framework=netcoreapp3.0
+        if [ ! $(dotnet --list-sdks | grep 3.0) ]; then NoSDKInstalled $framework; fi
+        Success "Creating the Plugin with the dotnet SDK Version: $framework" 5
+    elif [ "$3" = "4.20" ]; then
+        framework=netcoreapp3.1
+        if [ ! $(dotnet --list-sdks | grep 3.1) ]; then NoSDKInstalled $framework; fi
+        Success "Creating the Plugin with the dotnet SDK Version: $framework" 5
+    elif [ "$3" = "4.30" ]; then
+        framework=netcoreapp3.1
+        if [ ! $(dotnet --list-sdks | grep 3.1) ]; then NoSDKInstalled $framework; fi
+        Success "Creating the Plugin with the dotnet SDK Version: $framework" 5
+    elif [ "$3" = "4.40" ]; then
+        framework=net5.0
+        if [ ! $(dotnet --list-sdks | grep 5.0) ]; then NoSDKInstalled $framework; fi
+        Success "Creating the Plugin with the dotnet SDK Version: $framework" 5
+    elif [ "$3" = "4.50" ]; then
+        framework=net6.0
+        if [ ! $(dotnet --list-sdks | grep 6.0) ]; then NoSDKInstalled $framework; fi
+        Success "Creating the Plugin with the dotnet SDK Version: $framework" 5
+    else
+        framework=net7.0
+        if [ ! $(dotnet --list-sdks | grep 7.0) ]; then NoSDKInstalled $framework; fi
+        Success "Creating the Plugin with the dotnet SDK Version: $framework" 5
+    fi
+fi
+## NopCommerce info
+echo -e "######################  Create new Nop Commnerce Plugin  ######################\n"
+
+## Plugin info
+path=.                           ## the path of the nopCommnerce root in this case the same path ./
+group=$1                         ##
+name=$2                          ##
+modelName=${name}Model           ##
+controllerName=${name}Controller ##
+
+## Json file (plugin.json)
+PLUGIN_GROUP="${group} methods"
+FRIENDLY_NAME="${group} ${name}"
+SYSTEM_NAME="${group}.${name}"
+PLUGIN_VERSION="1.49"
+SUPPORTED_VERSIONS="$3"
+PLUGIN_AUTHOR="${appName} team"
+DISPLAY_ORDER=1 # integer
+FILE_NAME="Nop.Plugin.${group}.${name}.dll"
+PLUGIN_DESCRIPTION="This plugin allows paying with PayPal Standard"
+LIMITED_TO_STORE=""
+LIMITED_TO_CUSTOMER_ROLE=""
+DEPENDS_ON_SYSTEM_NAMES=""
+
+## Nop.Plugin.${group}.${name}.csproj
+SOME_COPYRIGHT="Copyright © Nop Solutions, Ltd"                  ##
+YOUR_COMPANY="Nop Solutions, Ltd"                                ##
+SOME_AUTHORS="Nop Solutions, Ltd"                                ##
+PACKAGE_LICENSE_URL=""                                           ## the url most to bi like this format: "https:\/\/www.page.com"
+PACKAGE_PROJECT_URL="https:\/\/www.nopcommerce.com"              ## the url most to bi like this format: "https:\/\/www.nopcommerce.com"
+REPOSITORY_URL="https:\/\/github.com\/nopSolutions\/nopCommerce" ## the url most to bi like this format: "https:\/\/github.com\/nopSolutions\/nopCommerce"
+REPOSITORY_TYPE=Git                                              #REPOSITORY_TYPE				                ##
+PLUGIN_OUTPUT_DIRECTORY=${group}.${name}                         ##
+
+## create the plugin
+if [ ! -f ${path}/Plugins/Nop.Plugin.${group}.${name}/Nop.Plugin.${group}.${name}.csproj ]; then
+    dotnet new classlib -n Nop.Plugin.${group}.${name} -f $framework -o ${path}/Plugins/Nop.Plugin.${group}.${name}
+else
+    ErrorTag "The Plugin named: Nop.Plugin.${group}.${name} already exists!"
+    exit 0
+fi
+
+if [ -f ${path}/Plugins/Nop.Plugin.${group}.${name}/Class1.cs ]; then
+    rm ${path}/Plugins/Nop.Plugin.${group}.${name}/Class1.cs
+fi
+
+if [ -d ${path}/Plugins/Nop.Plugin.${group}.${name} ]; then
+    mkdir -p -v ${path}/Plugins/Nop.Plugin.${group}.${name}
+fi
+
+## Editting Nop.Plugin.${group}.${name}.csproj
+WarningCreating "Creating the Nop.Plugin.${group}.${name}.csproj file..." 1
+echo "<Project Sdk="'"Microsoft.NET.Sdk"'">" >${path}/Plugins/Nop.Plugin.${group}.${name}/Nop.Plugin.${group}.${name}.csproj
+echo "    <PropertyGroup>" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Nop.Plugin.${group}.${name}.csproj
+echo "        <TargetFramework>$framework</TargetFramework>" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Nop.Plugin.${group}.${name}.csproj
+echo "        <Copyright>$SOME_COPYRIGHT</Copyright>" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Nop.Plugin.${group}.${name}.csproj
+echo "        <Company>$YOUR_COMPANY</Company>" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Nop.Plugin.${group}.${name}.csproj
+echo "        <Authors>$SOME_AUTHORS</Authors>" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Nop.Plugin.${group}.${name}.csproj
+echo "        <PackageLicenseUrl>$PACKAGE_LICENSE_URL</PackageLicenseUrl>" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Nop.Plugin.${group}.${name}.csproj
+echo "        <PackageProjectUrl>$PACKAGE_PROJECT_URL</PackageProjectUrl>" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Nop.Plugin.${group}.${name}.csproj
+echo "        <RepositoryUrl>$REPOSITORY_URL</RepositoryUrl>" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Nop.Plugin.${group}.${name}.csproj
+echo "        <RepositoryType>$REPOSITORY_TYPE</RepositoryType>" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Nop.Plugin.${group}.${name}.csproj
+echo "        <OutputPath>..\..\Presentation\Nop.Web\Plugins\\${PLUGIN_OUTPUT_DIRECTORY}</OutputPath>" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Nop.Plugin.${group}.${name}.csproj
+echo "        <OutDir>'\$(OutputPath)'</OutDir>" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Nop.Plugin.${group}.${name}.csproj
+echo "        <!--Set this parameter to true to get the dlls copied from the NuGet cache to the output of your    project. You need to set this parameter to true if your plugin has a nuget package to ensure that   the dlls copied from the NuGet cache to the output of your project-->" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Nop.Plugin.${group}.${name}.csproj
+echo "        <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Nop.Plugin.${group}.${name}.csproj
+echo "    </PropertyGroup>" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Nop.Plugin.${group}.${name}.csproj
+echo "    <ItemGroup>" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Nop.Plugin.${group}.${name}.csproj
+echo "        <ProjectReference Include="'"..\..\Presentation\Nop.Web.Framework\Nop.Web.Framework.csproj"'" />" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Nop.Plugin.${group}.${name}.csproj
+echo "        <ClearPluginAssemblies Include="'"$(MSBuildProjectDirectory)\..\..\Build\ClearPluginAssemblies.proj"'" />" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Nop.Plugin.${group}.${name}.csproj
+echo "    </ItemGroup>" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Nop.Plugin.${group}.${name}.csproj
+echo "    <!-- This target execute after "'"Build"'" target -->" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Nop.Plugin.${group}.${name}.csproj
+echo "    <Target Name="'"NopTarget"'" AfterTargets="'"Build"'">" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Nop.Plugin.${group}.${name}.csproj
+echo "        <!-- Delete unnecessary libraries from plugins path -->" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Nop.Plugin.${group}.${name}.csproj
+echo "        <MSBuild Projects="'"@(ClearPluginAssemblies)"'" Properties="'"PluginPath=$(MSBuildProjectDirectory)\$(OutDir)"'" Targets="'"NopClear"'" />" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Nop.Plugin.${group}.${name}.csproj
+echo "    </Target>" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Nop.Plugin.${group}.${name}.csproj
+echo "</Project>" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Nop.Plugin.${group}.${name}.csproj
+if [ -f ${path}/Plugins/Nop.Plugin.${group}.${name}/Nop.Plugin.${group}.${name}.csproj ]; then
+    Success "The file Nop.Plugin.${group}.${name}.csproj was edited!"
+else
+    ErrorTag "There was and error creating the file Nop.Plugin.${group}.${name}.csproj."
+    exit 0
+fi
+
+## Json file (plugin.json)
+WarningCreating "Creating the plugin.json file..." 1
+echo "{" >${path}/Plugins/Nop.Plugin.${group}.${name}/plugin.json
+echo "    "'"Group"'": "\"$PLUGIN_GROUP"\"," >>${path}/Plugins/Nop.Plugin.${group}.${name}/plugin.json
+echo "    "'"FriendlyName"'": "\"$FRIENDLY_NAME"\"," >>${path}/Plugins/Nop.Plugin.${group}.${name}/plugin.json
+echo "    "'"SystemName"'": "\"$SYSTEM_NAME"\"," >>${path}/Plugins/Nop.Plugin.${group}.${name}/plugin.json
+echo "    "'"Version"'": "\"$PLUGIN_VERSION"\"," >>${path}/Plugins/Nop.Plugin.${group}.${name}/plugin.json
+echo "    "'"SupportedVersions"'": [ "\"$SUPPORTED_VERSIONS"\" ]," >>${path}/Plugins/Nop.Plugin.${group}.${name}/plugin.json
+echo "    "'"Author"'": "\"$PLUGIN_AUTHOR"\"," >>${path}/Plugins/Nop.Plugin.${group}.${name}/plugin.json
+echo "    "'"DisplayOrder"'": $DISPLAY_ORDER," >>${path}/Plugins/Nop.Plugin.${group}.${name}/plugin.json
+echo "    "'"FileName"'": "\"$FILE_NAME"\"," >>${path}/Plugins/Nop.Plugin.${group}.${name}/plugin.json
+echo "    "'"Description"'": "\"$PLUGIN_DESCRIPTION"\"," >>${path}/Plugins/Nop.Plugin.${group}.${name}/plugin.json
+echo "    "'"LimitedToStores"'": "\"$LIMITED_TO_STORE"\"," >>${path}/Plugins/Nop.Plugin.${group}.${name}/plugin.json
+echo "    "'"LimitedToCustomerRoles"'":"\"$LIMITED_TO_CUSTOMER_ROLE"\"," >>${path}/Plugins/Nop.Plugin.${group}.${name}/plugin.json
+echo "    "'"DependsOnSystemNames"'":"\"$DEPENDS_ON_SYSTEM_NAMES"\"," >>${path}/Plugins/Nop.Plugin.${group}.${name}/plugin.json
+echo "}" >>${path}/Plugins/Nop.Plugin.${group}.${name}/plugin.json
+if [ -f ${path}/Plugins/Nop.Plugin.${group}.${name}/plugin.json ]; then
+    Success "The plugin.json was created success!"
+else
+    ErrorTag "There was and error creating the file plugin.json."
+    exit 0
+fi
+
+## Create the mvc and(Infrastructure) dirs
+if [ ! -f ${path}/Plugins/Nop.Plugin.${group}.${name}/Models ] && [ ! -f ${path}/Plugins/Nop.Plugin.${group}.${name}/Views ] && [ ! -f ${path}/Plugins/Nop.Plugin.${group}.${name}/Controllers ] && [ ! -f ${path}/Plugins/Nop.Plugin.${group}.${name}/Infrastructure ]; then
+    WarningCreating "Creating the folders {Models, Views, Controllers, Infrastructure}!" 1
+    mkdir -v ${path}/Plugins/Nop.Plugin.${group}.${name}/{Models,Views,Controllers,Infrastructure}
+    Success "Folders created success!"
+fi
+
+## Views _ViewImports
+WarningCreating "Creating the _ViewImports file..." 1
+echo "@inherits Nop.Web.Framework.Mvc.Razor.NopRazorPage<TModel>" >${path}/Plugins/Nop.Plugin.${group}.${name}/Views/_ViewImports.cshtml
+echo "@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Views/_ViewImports.cshtml
+echo "@addTagHelper *, Nop.Web.Framework" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Views/_ViewImports.cshtml
+echo "" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Views/_ViewImports.cshtml
+echo "@using Microsoft.AspNetCore.Mvc.ViewFeatures" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Views/_ViewImports.cshtml
+echo "@using Nop.Web.Framework.UI" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Views/_ViewImports.cshtml
+echo "@using Nop.Web.Framework.Extensions" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Views/_ViewImports.cshtml
+echo "@using System.Text.Encodings.Web" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Views/_ViewImports.cshtml
+if [ -f ${path}/Plugins/Nop.Plugin.${group}.${name}/Views/_ViewImports.cshtml ]; then
+    Success "The _ViewImports was created success!"
+else
+    Error "There was and error creating the file _ViewImports."
+    exit 0
+fi
+
+## Model ${modelName}
+WarningCreating "Creating the ${modelName}..." 1
+echo "using System.ComponentModel.DataAnnotations;" >${path}/Plugins/Nop.Plugin.${group}.${name}/Models/${modelName}.cs
+echo "using Microsoft.AspNetCore.Mvc.Rendering;" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Models/${modelName}.cs
+echo "using Nop.Web.Framework.Models;" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Models/${modelName}.cs
+echo "" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Models/${modelName}.cs
+echo "namespace Nop.Plugin.${group}.${name}/Models" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Models/${modelName}.cs
+echo "{" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Models/${modelName}.cs
+echo "    public record ${modelName} : BaseNopModel" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Models/${modelName}.cs
+echo "    {" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Models/${modelName}.cs
+echo "        public int ActiveStoreScopeConfiguration { get; set; }" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Models/${modelName}.cs
+echo "    }" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Models/${modelName}.cs
+echo "}" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Models/${modelName}.cs
+if [ -f ${path}/Plugins/Nop.Plugin.${group}.${name}/Models/${modelName}.cs ]; then
+    Success "The ${modelName} Model was created success!"
+else
+    ErrorTag "There was and error creating the file ${modelName}."
+    exit 0
+fi
+
+## Views Configure
+WarningCreating "Creating the Views Configure file..." 1
+echo "@{" >${path}/Plugins/Nop.Plugin.${group}.${name}/Views/Configure.cshtml
+echo '    Layout = "_ConfigurePlugin";' >>${path}/Plugins/Nop.Plugin.${group}.${name}/Views/Configure.cshtml
+echo "}" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Views/Configure.cshtml
+echo "" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Views/Configure.cshtml
+echo "@using Nop.Plugin.Shipping.ShipStation" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Views/Configure.cshtml
+echo "@model Nop.Plugin.Shipping.ShipStation.Models.ShipStationModel" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Views/Configure.cshtml
+echo "" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Views/Configure.cshtml
+echo '@await Component.InvokeAsync("StoreScopeConfiguration")' >>${path}/Plugins/Nop.Plugin.${group}.${name}/Views/Configure.cshtml
+if [ -f ${path}/Plugins/Nop.Plugin.${group}.${name}/Views/Configure.cshtml ]; then
+    Success "The Views Configure was created success!"
+else
+    ErrorTag "There was and error creating the file Views Configure."
+    exit 0
+fi
+
+## Controllers
+WarningCreating "Creating the ${controllerName} class..." 1
+echo "using System;" >${path}/Plugins/Nop.Plugin.${group}.${name}/Controllers/${controllerName}.cs
+echo "using System.Linq;" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Controllers/${controllerName}.cs
+echo "using Nop.Web.Framework;" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Controllers/${controllerName}.cs
+echo "using System.Threading.Tasks;" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Controllers/${controllerName}.cs
+echo "using Microsoft.AspNetCore.Mvc;" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Controllers/${controllerName}.cs
+echo "using System.Collections.Generic;" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Controllers/${controllerName}.cs
+echo "using Nop.Web.Framework.Controllers;" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Controllers/${controllerName}.cs
+echo "using Nop.Web.Framework.Mvc.Filters;" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Controllers/${controllerName}.cs
+echo "using Microsoft.AspNetCore.Mvc.Rendering;" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Controllers/${controllerName}.cs
+echo "" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Controllers/${controllerName}.cs
+echo "namespace Nop.Plugin.${group}.${name}.Controllers" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Controllers/${controllerName}.cs
+echo "{" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Controllers/${controllerName}.cs
+echo "    [AuthorizeAdmin]" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Controllers/${controllerName}.cs
+echo "    [Area(AreaNames.Admin)]" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Controllers/${controllerName}.cs
+echo "    [AutoValidateAntiforgeryToken]" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Controllers/${controllerName}.cs
+echo "    public class UPSShippingController : BasePluginController" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Controllers/${controllerName}.cs
+echo "    {" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Controllers/${controllerName}.cs
+echo "        #region Fields" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Controllers/${controllerName}.cs
+echo "        private readonly ISettingService _settingService;" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Controllers/${controllerName}.cs
+echo "        #endregion" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Controllers/${controllerName}.cs
+echo "" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Controllers/${controllerName}.cs
+echo "        #region Ctor" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Controllers/${controllerName}.cs
+echo "        public UPSShippingController(ISettingService settingService)" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Controllers/${controllerName}.cs
+echo "        {" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Controllers/${controllerName}.cs
+echo "            _settingService = settingService;" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Controllers/${controllerName}.cs
+echo "        }" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Controllers/${controllerName}.cs
+echo "        #endregion" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Controllers/${controllerName}.cs
+echo "" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Controllers/${controllerName}.cs
+echo "        #region Methods" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Controllers/${controllerName}.cs
+echo "        // methods here" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Controllers/${controllerName}.cs
+echo "        #endregion" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Controllers/${controllerName}.cs
+echo "    }" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Controllers/${controllerName}.cs
+echo "}" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Controllers/${controllerName}.cs
+if [ -f ${path}/Plugins/Nop.Plugin.${group}.${name}/Controllers/${controllerName}.cs ]; then
+    Success "The ${controllerName} class was created success!"
+else
+    ErrorTag "There was and error creating the ${controllerName}."
+    exit 0
+fi
+
+## Infrastructure DependencyRegistrar.cs
+WarningCreating "Creating the DependencyRegistrar class..." 1
+echo "using Microsoft.Extensions.DependencyInjection;" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Infrastructure/DependencyRegistrar.cs
+echo "using Nop.Core.Configuration;" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Infrastructure/DependencyRegistrar.cs
+echo "using Nop.Core.Infrastructure;" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Infrastructure/DependencyRegistrar.cs
+echo "using Nop.Core.Infrastructure.DependencyManagement;" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Infrastructure/DependencyRegistrar.cs
+echo "" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Infrastructure/DependencyRegistrar.cs
+echo "namespace Nop.Plugin.${group}.${name}.Infrastructure" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Infrastructure/DependencyRegistrar.cs
+echo "{" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Infrastructure/DependencyRegistrar.cs
+echo "    /// <summary>" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Infrastructure/DependencyRegistrar.cs
+echo "    /// Dependency registrar" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Infrastructure/DependencyRegistrar.cs
+echo "    /// </summary>" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Infrastructure/DependencyRegistrar.cs
+echo "    public class DependencyRegistrar : IDependencyRegistrar" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Infrastructure/DependencyRegistrar.cs
+echo "    {" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Infrastructure/DependencyRegistrar.cs
+echo "        /// <summary>" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Infrastructure/DependencyRegistrar.cs
+echo "        /// Register services and interfaces" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Infrastructure/DependencyRegistrar.cs
+echo "        /// </summary>" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Infrastructure/DependencyRegistrar.cs
+echo "        /// <param name="services">Collection of service descriptors</param>" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Infrastructure/DependencyRegistrar.cs
+echo "        /// <param name="typeFinder">Type finder</param>" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Infrastructure/DependencyRegistrar.cs
+echo "        /// <param name="appSettings">App settings</param>" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Infrastructure/DependencyRegistrar.cs
+echo "        public virtual void Register(IServiceCollection services, ITypeFinder typeFinder, AppSettings appSettings)" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Infrastructure/DependencyRegistrar.cs
+echo "        {" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Infrastructure/DependencyRegistrar.cs
+echo "            //register UPSService" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Infrastructure/DependencyRegistrar.cs
+echo "            services.AddScoped<UPSService>();" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Infrastructure/DependencyRegistrar.cs
+echo "        }" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Infrastructure/DependencyRegistrar.cs
+echo "" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Infrastructure/DependencyRegistrar.cs
+echo "        /// <summary>" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Infrastructure/DependencyRegistrar.cs
+echo "        /// Order of this dependency registrar implementation" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Infrastructure/DependencyRegistrar.cs
+echo "        /// </summary>" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Infrastructure/DependencyRegistrar.cs
+echo "        public int Order => 1;" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Infrastructure/DependencyRegistrar.cs
+echo "    }" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Infrastructure/DependencyRegistrar.cs
+echo "}" >>${path}/Plugins/Nop.Plugin.${group}.${name}/Infrastructure/DependencyRegistrar.cs
+if [ -f ${path}/Plugins/Nop.Plugin.${group}.${name}/Infrastructure/DependencyRegistrar.cs ]; then
+    Success "The DependencyRegistrar class was created success!"
+else
+    ErrorTag "There was and error creating the file DependencyRegistrar."
+    exit 0
+fi
+
+# validate if the reference exists
+cd ${path}
+if [ ! $(dotnet sln list | grep Nop.Plugin.${group}.${name}/Nop.Plugin.${group}.${name}.csproj) ]; then
+    dotnet sln add ./Plugins/Nop.Plugin.${group}.${name}/Nop.Plugin.${group}.${name}.csproj
+fi
+cd ..
+
+tput setaf 7
+echo "The Plugin: Nop.Plugin.${group}.${name} was successfull created on LocalPath: ${path}/Plugins/Nop.Plugin.${group}.${name}/"
+echo "You can type: cd ${appName} to see the information"
+echo "Thanks for using this script, enjoy your plugin!"
+exit 0
