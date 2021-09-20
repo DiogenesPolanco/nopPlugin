@@ -123,39 +123,39 @@ NoSDKInstalled() {
     local sdk=$1
     Error "No dotnet Sdk ($sdk) install. for information plese type followin command: dotnet --list-sdks"
 }
-if [ ! -d ./Plugins ] && [ ! -f ./*.sln ]; then DirHelp; fi
 if [ "$1" = "-h" -o "$1" = "--help" ]; then Help; fi
+if [ ! -d ./Plugins ] && [ ! -f ./*.sln ]; then DirHelp; fi
 if [ "$1" = "new" ] && [ "$2" = "-h" -o "$2" = "--help" ]; then CommandHelp; fi
 if [ "$1" = "" -o "$2" = "" -o "$3" = "" ]; then
     HelpExample
 else
     if [ "$3" = "4.00" ]; then
         framework=netcoreapp3.0
-        if [ ! $(dotnet --list-sdks | grep 3.0) ]; then NoSDKInstalled $framework; fi
+        if [ $(dotnet --list-sdks | grep -c 3.0) = 0 ]; then NoSDKInstalled $framework; fi
         Success "Creating the Plugin with the dotnet SDK Version: $framework" 5
     elif [ "$3" = "4.10" ]; then
         framework=netcoreapp3.0
-        if [ ! $(dotnet --list-sdks | grep 3.0) ]; then NoSDKInstalled $framework; fi
+        if [ $(dotnet --list-sdks | grep -c 3.0) = 0 ]; then NoSDKInstalled $framework; fi
         Success "Creating the Plugin with the dotnet SDK Version: $framework" 5
     elif [ "$3" = "4.20" ]; then
         framework=netcoreapp3.1
-        if [ ! $(dotnet --list-sdks | grep 3.1) ]; then NoSDKInstalled $framework; fi
+        if [ $(dotnet --list-sdks | grep -c 3.1) = 0 ]; then NoSDKInstalled $framework; fi
         Success "Creating the Plugin with the dotnet SDK Version: $framework" 5
     elif [ "$3" = "4.30" ]; then
         framework=netcoreapp3.1
-        if [ ! $(dotnet --list-sdks | grep 3.1) ]; then NoSDKInstalled $framework; fi
+        if [ $(dotnet --list-sdks | grep -c 3.1) = 0 ]; then NoSDKInstalled $framework; fi
         Success "Creating the Plugin with the dotnet SDK Version: $framework" 5
     elif [ "$3" = "4.40" ]; then
         framework=net5.0
-        if [ ! $(dotnet --list-sdks | grep 5.0) ]; then NoSDKInstalled $framework; fi
+        if [ $(dotnet --list-sdks | grep -c 5.0) = 0 ]; then NoSDKInstalled $framework; fi
         Success "Creating the Plugin with the dotnet SDK Version: $framework" 5
     elif [ "$3" = "4.50" ]; then
         framework=net6.0
-        if [ ! $(dotnet --list-sdks | grep 6.0) ]; then NoSDKInstalled $framework; fi
+        if [ $(dotnet --list-sdks | grep -c 6.0) = 0 ]; then NoSDKInstalled $framework; fi
         Success "Creating the Plugin with the dotnet SDK Version: $framework" 5
     else
         framework=net7.0
-        if [ ! $(dotnet --list-sdks | grep 7.0) ]; then NoSDKInstalled $framework; fi
+        if [ $(dotnet --list-sdks | grep -c 7.0) = 0 ]; then NoSDKInstalled $framework; fi
         Success "Creating the Plugin with the dotnet SDK Version: $framework" 5
     fi
 fi
