@@ -12,11 +12,13 @@
 
 To make an executable file in linux we run the following command:
 
-`sudo chmod +x filename`
+`chmod +x filename`
 
 in this case:
 
-`sudo chmod +x plugin`
+`chmod +x plugin`
+
+If the sudo privilege is required, use it.
 
 Located in the nopcommerce folder copy this file (plugin) and run it.
 
