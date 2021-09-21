@@ -8,6 +8,18 @@
 
 **nopCommerce 4.10 and up [4.10, 4.20, 4.30, 4.40, 4.50, ...]**
 
+# How to use the plugin sh file
+
+To make an executable file in linux we run the following command:
+
+`sudo chmod +x filename`
+
+in this case:
+
+`sudo chmod +x plugin`
+
+Located in the nopcommerce folder copy this file (plugin) and run it.
+
 # Steps for create a Plugin
 
 **Step one**
