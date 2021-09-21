@@ -42,7 +42,7 @@ after runnig the command you will see something like this:
 
 ![plugin](https://user-images.githubusercontent.com/6993888/134069458-16e98756-6827-44b7-9c3d-5f6b8f2c28e2.png)
 
-#Install to use command from anywhere
+# Install to use command from anywhere
 
 * Download the latest the latest release.
 * Unzip it.
