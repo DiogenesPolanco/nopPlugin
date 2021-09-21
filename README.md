@@ -42,5 +42,21 @@ after runnig the command you will see something like this:
 
 ![plugin](https://user-images.githubusercontent.com/6993888/134069458-16e98756-6827-44b7-9c3d-5f6b8f2c28e2.png)
 
+#Install to use command from anywhere
+
+* Download the latest the latest release.
+* Unzip it.
+* Copy the file to the /bin/ folder.
+* You can type the next command line:
+
+`sudo cp plugin /bin/plugin`
+
+Then you can run the command in terminal like this:
+
+`plugin Group Name`
+
+`plugin Group Name 4.30`
+
+In the last release ver version the nopCommerce version is optional.
 
 Easy way to create a nopCommerce plugin, tested on archlinux
