@@ -188,7 +188,6 @@ else
         HelpExample
     fi
 fi
-exit 0
 ## NopCommerce info
 echo -e "######################  Create new Nop Commnerce Plugin  ######################\n"
 
