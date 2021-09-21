@@ -120,7 +120,7 @@ HelpExample() {
 }
 NoSDKInstalled() {
     local sdk=$1
-    Error "You do not have the dotnet SDK ($sdk) installed. For more information plaese type followin command: dotnet --list-sdks"
+    Error "You do not have the dotnet SDK ($sdk) installed.\n$(tput setaf 7)For more information plaese type followin command: dotnet --list-sdks\nTo install additional .NET runtimes or SDKs: https://aka.ms/dotnet-download"
 }
 if [ "$1" = "-h" -o "$1" = "--help" ]; then Help; fi
 if [ "$1" = "new" ] && [ "$2" = "-h" -o "$2" = "--help" ]; then CommandHelp; fi
