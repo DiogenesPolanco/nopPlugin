@@ -125,43 +125,74 @@ NoSDKInstalled() {
 if [ "$1" = "-h" -o "$1" = "--help" ]; then Help; fi
 if [ "$1" = "new" ] && [ "$2" = "-h" -o "$2" = "--help" ]; then CommandHelp; fi
 if [ ! -d ./Plugins -o ! -d ./Presentation -o ! -f ./*.sln ]; then DirHelp; fi
-if [ "$1" = "" -o "$2" = "" -o "$3" = "" ]; then
+if [ "$1" = "" -o "$2" = "" ]; then
     HelpExample
 else
-    if [ "$3" = "4.10" ]; then
-        framework=netcoreapp2.1
-        if [ $(dotnet --list-sdks | grep -c 2.1) = 0 ]; then NoSDKInstalled $framework; fi
-        Success "Creating the Plugin with the dotnet SDK Version: $framework"
-    elif [ "$3" = "4.20" ]; then
-        framework=netcoreapp2.2
-        if [ $(dotnet --list-sdks | grep -c 2.2) = 0 ]; then NoSDKInstalled $framework; fi
-        Success "Creating the Plugin with the dotnet SDK Version: $framework"
-    elif [ "$3" = "4.30" ]; then
-        framework=netcoreapp3.1
-        if [ $(dotnet --list-sdks | grep -c 3.1) = 0 ]; then NoSDKInstalled $framework; fi
-        Success "Creating the Plugin with the dotnet SDK Version: $framework"
-    elif [ "$3" = "4.40" ]; then
-        framework=net5.0
-        if [ $(dotnet --list-sdks | grep -c 5.0) = 0 ]; then NoSDKInstalled $framework; fi
-        Success "Creating the Plugin with the dotnet SDK Version: $framework"
-    elif [ "$3" = "4.50" ]; then
-        framework=net6.0
-        if [ $(dotnet --list-sdks | grep -c 6.0) = 0 ]; then NoSDKInstalled $framework; fi
-        Success "Creating the Plugin with the dotnet SDK Version: $framework"
-    elif [ "$3" = "4.60" ]; then
-        framework=net7.0
-        if [ $(dotnet --list-sdks | grep -c 7.0) = 0 ]; then NoSDKInstalled $framework; fi
-        Success "Creating the Plugin with the dotnet SDK Version: $framework"
+    path=. ## the path of the nopCommnerce root in this case the same path ./
+    if [ "$3" = "" ] && [ -f $path/Libraries/Nop.Core/NopVersion.cs ]; then
+        if [ $(grep -c -F '"4.10"' ./Libraries/Nop.Core/NopVersion.cs) != 0 ]; then
+            framework=netcoreapp2.1
+            if [ $(dotnet --list-sdks | grep -c 2.1) = 0 ]; then NoSDKInstalled $framework; fi
+            Success "Creating the Plugin with the dotnet SDK Version: $framework"
+        elif [ $(grep -c '"4.20"' ./Libraries/Nop.Core/NopVersion.cs) != 0 ]; then
+            framework=netcoreapp2.2
+            if [ $(dotnet --list-sdks | grep -c 2.2) = 0 ]; then NoSDKInstalled $framework; fi
+            Success "Creating the Plugin with the dotnet SDK Version: $framework"
+        elif [ $(grep -c '"4.30"' $path/Libraries/Nop.Core/NopVersion.cs) != 0 ]; then
+            framework=netcoreapp3.1
+            if [ $(dotnet --list-sdks | grep -c 3.1) = 0 ]; then NoSDKInstalled $framework; fi
+            Success "Creating the Plugin with the dotnet SDK Version: $framework"
+        elif [ $(grep -c '"4.40"' $path/Libraries/Nop.Core/NopVersion.cs) != 0 ]; then
+            framework=net5.0
+            if [ $(dotnet --list-sdks | grep -c 5.0) = 0 ]; then NoSDKInstalled $framework; fi
+            Success "Creating the Plugin with the dotnet SDK Version: $framework"
+        elif [ $(grep -c '"4.50"' $path/Libraries/Nop.Core/NopVersion.cs) != 0 ]; then
+            framework=net6.0
+            if [ $(dotnet --list-sdks | grep -c 6.0) = 0 ]; then NoSDKInstalled $framework; fi
+            Success "Creating the Plugin with the dotnet SDK Version: $framework"
+        elif [ $(grep -c '"4.60"' $path/Libraries/Nop.Core/NopVersion.cs) != 0 ]; then
+            framework=net7.0
+            if [ $(dotnet --list-sdks | grep -c 7.0) = 0 ]; then NoSDKInstalled $framework; fi
+            Success "Creating the Plugin with the dotnet SDK Version: $framework"
+        fi
+    elif [ "$3" != "" ]; then
+        if [ "$3" = "4.10" ]; then
+            framework=netcoreapp2.1
+            if [ $(dotnet --list-sdks | grep -c 2.1) = 0 ]; then NoSDKInstalled $framework; fi
+            Success "Creating the Plugin with the dotnet SDK Version: $framework"
+        elif [ "$3" = "4.20" ]; then
+            framework=netcoreapp2.2
+            if [ $(dotnet --list-sdks | grep -c 2.2) = 0 ]; then NoSDKInstalled $framework; fi
+            Success "Creating the Plugin with the dotnet SDK Version: $framework"
+        elif [ "$3" = "4.30" ]; then
+            framework=netcoreapp3.1
+            if [ $(dotnet --list-sdks | grep -c 3.1) = 0 ]; then NoSDKInstalled $framework; fi
+            Success "Creating the Plugin with the dotnet SDK Version: $framework"
+        elif [ "$3" = "4.40" ]; then
+            framework=net5.0
+            if [ $(dotnet --list-sdks | grep -c 5.0) = 0 ]; then NoSDKInstalled $framework; fi
+            Success "Creating the Plugin with the dotnet SDK Version: $framework"
+        elif [ "$3" = "4.50" ]; then
+            framework=net6.0
+            if [ $(dotnet --list-sdks | grep -c 6.0) = 0 ]; then NoSDKInstalled $framework; fi
+            Success "Creating the Plugin with the dotnet SDK Version: $framework"
+        elif [ "$3" = "4.60" ]; then
+            framework=net7.0
+            if [ $(dotnet --list-sdks | grep -c 7.0) = 0 ]; then NoSDKInstalled $framework; fi
+            Success "Creating the Plugin with the dotnet SDK Version: $framework"
+        else
+            ErrorTag "The nopCommerce version is not compatible with this script. \nPlease verify the currents vesion are [4.10, 4.20, 4.30, 4.40, 4.50, ..., 4.60]"
+            exit 0
+        fi
     else
-        ErrorTag "The nopCommerce version is not compatible with this script. \nPlease verify the currents vesion are [4.10, 4.20, 4.30, 4.40, 4.50, ..., 4.60]"
-        exit 0
+        HelpExample
     fi
 fi
+exit 0
 ## NopCommerce info
 echo -e "######################  Create new Nop Commnerce Plugin  ######################\n"
 
 ## Plugin info
-path=.                           ## the path of the nopCommnerce root in this case the same path ./
 group=$1                         ##
 name=$2                          ##
 modelName=${name}Model           ##
