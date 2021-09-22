@@ -40,7 +40,14 @@ it shows in the next picture
 
 after runnig the command you will see something like this: 
 
+Arch-Linux
+
 ![plugin](https://user-images.githubusercontent.com/6993888/134069458-16e98756-6827-44b7-9c3d-5f6b8f2c28e2.png)
+
+MacOS 11.2.x
+
+![telegram-cloud-photo-size-1-5066744808986487269-y](https://user-images.githubusercontent.com/6993888/134271885-862f86fa-ea17-430b-aae5-d712a07b4baa.jpg)
+
 
 # Install to use command from anywhere
 
@@ -59,4 +66,4 @@ Then you can run the command in terminal like this:
 
 In the last release ver version the nopCommerce version is optional.
 
-Easy way to create a nopCommerce plugin, tested on archlinux
+Easy way to create a nopCommerce plugin, tested on Arch Linux and Mac OS
